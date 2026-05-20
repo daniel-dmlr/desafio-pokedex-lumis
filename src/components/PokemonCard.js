@@ -1,19 +1,55 @@
-import { getSpriteUrl, formatId, capitalize } from '../utils/pokemon.js'
+import { getSpriteUrl, formatId, capitalize, translateType, getTypeColor } from '../utils/pokemon.js'
 
 export function PokemonCard(pokemon) {
-    const { id, name, types } = pokemon
-    const spriteUrl = getSpriteUrl(id)
+  const { id, name, types } = pokemon
+  const spriteUrl = getSpriteUrl(id)
 
-    const typesBadges = types
-        .map(({ type }) => `<span class="type-badge type-${type.name}">${capitalize(type.name)}</span>`)
-        .join('')
+  const typesBadges = types
+    .map(({ type }) => {
+      const { text } = getTypeColor(type.name)
 
-    return `
-    <article class="pokemon-card" data-id="${id}">
-      <span class="pokemon-id">${formatId(id)}</span>
-      <img src="${spriteUrl}" alt="${capitalize(name)}" class="pokemon-sprite" loading="lazy" />
-      <h3 class="pokemon-name">${capitalize(name)}</h3>
-      <div class="pokemon-types">${typesBadges}</div>
+      return `
+        <span
+          class="type-badge"
+          style="color:${text}; font-weight: 700;"
+        >
+          ${translateType(type.name)}
+        </span>
+      `
+    })
+    .join('')
+
+  return `
+    <article
+      class="bg-[#F0F3FF] flex flex-col justify-center items-center rounded-lg"
+      data-id="${id}"
+    >
+      <div
+        id="pokemon-header"
+        class="w-full flex justify-between p-3"
+      >
+        <div class="flex gap-1">
+          ${typesBadges}
+        </div>
+
+        <span class="text-[#263156] font-bold">
+          ${formatId(id)}
+        </span>
+      </div>
+
+      <img
+        src="${spriteUrl}"
+        alt="${capitalize(name)}"
+        class="
+          w-36 h-36 pt-5
+          object-contain
+        "
+        loading="lazy"
+      />
+
+      <h3 class="text-[#263156] font-bold pt-3 pb-14">
+        ${capitalize(name)}
+      </h3>
     </article>
   `
 }

@@ -1,6 +1,6 @@
 import { http } from '../http.js'
 
-const LIMIT = 20
+const LIMIT = 18
 
 export async function fetchPokemonList(page = 1) {
   const offset = (page - 1) * LIMIT
