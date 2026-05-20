@@ -5,10 +5,12 @@ export function PokemonCard(pokemon) {
   const spriteUrl = getSpriteUrl(id)
 
   const typesBadges = types
-    .map(({ type }) => {
+    .map(({ type }, index) => {
       const { text } = getTypeColor(type.name)
 
       return `
+        ${index > 0 ? `<spanclass="w-[3px] h-[3px] rounded-full bg-[#757575] self-centershrink-0"></span>` : ''}
+
         <span
           class="type-badge"
           style="color:${text}; font-weight: 700;"
@@ -28,7 +30,7 @@ export function PokemonCard(pokemon) {
         id="pokemon-header"
         class="w-full flex justify-between p-3"
       >
-        <div class="flex gap-1">
+        <div class="flex items-center gap-1">
           ${typesBadges}
         </div>
 
@@ -40,10 +42,7 @@ export function PokemonCard(pokemon) {
       <img
         src="${spriteUrl}"
         alt="${capitalize(name)}"
-        class="
-          w-36 h-36 pt-5
-          object-contain
-        "
+        class="w-36 h-36 pt-5 object-contain"
         loading="lazy"
       />
 

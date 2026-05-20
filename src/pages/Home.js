@@ -1,11 +1,11 @@
 import '../styles/style.css'
+import { fetchPokemonList, fetchPokemonDetails, fetchPokemon } from '../api/services/pokemon.js'
+// import {fetchTypes,fetchPokemonByType} from '../api/services/type.js'
 import { SearchBar } from '../components/SearchBar.js'
 // import { TypeFilter } from '../components/TypeFilter.js'
 import { PokemonCard } from '../components/PokemonCard.js'
 import { Pagination } from '../components/Pagination.js'
 import { Loading } from '../components/Loading.js'
-import { fetchPokemonList, fetchPokemonDetails, fetchPokemon } from '../api/services/pokemon.js'
-// import {fetchTypes,fetchPokemonByType} from '../api/services/type.js'
 import { getTotalPages } from '../utils/pagination.js'
 import { debounce } from '../utils/debounce.js'
 
@@ -63,12 +63,7 @@ export async function HomePage(app) {
     }
 
     function renderPagination() {
-        const {
-            currentPage,
-            totalPages,
-            searchQuery,
-            selectedType,
-        } = state
+        const { currentPage, totalPages, searchQuery, selectedType } = state
 
         if (searchQuery || selectedType) {
             paginationEl.innerHTML = ''
@@ -89,9 +84,7 @@ export async function HomePage(app) {
     async function renderControls() {
         // const types = await fetchTypes().catch(() => [])
 
-        controlsEl.innerHTML =
-            SearchBar()
-        // + TypeFilter(types, state.selectedType)
+        controlsEl.innerHTML = SearchBar() // + TypeFilter(types, state.selectedType)
 
         bindControlEvents()
     }
@@ -214,15 +207,12 @@ export async function HomePage(app) {
     }
 
     function bindControlEvents() {
-        const searchInput =
-            controlsEl.querySelector('#search-input')
+        const searchInput = controlsEl.querySelector('#search-input')
 
         // const typeSelect =
         //     controlsEl.querySelector('#type-filter')
 
-        searchInput?.addEventListener('input', (e) =>
-            handleSearch(e.target.value.trim())
-        )
+        searchInput?.addEventListener('input', (e) => handleSearch(e.target.value.trim()))
 
         // typeSelect?.addEventListener('change', (e) =>
         //     handleTypeFilter(e.target.value)

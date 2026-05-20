@@ -51,11 +51,7 @@ export function Pagination({
         return `
           <li>
             <span
-              class="
-                flex items-center justify-center
-                text-base font-medium
-                w-8 h-8
-              "
+              class="flex items-center justify-center text-base font-medium w-8 h-8"
             >
               ...
             </span>
@@ -68,17 +64,7 @@ export function Pagination({
       return `
         <li>
           <button
-            class="
-              flex items-center justify-center
-              text-base font-medium
-              w-8 h-8
-              rounded-lg
-              cursor-pointer
-              ${isActive
-          ? 'bg-[#2C2C2C] text-white'
-          : 'hover:bg-[#E5E5E5] text-[#1E1E1E]'
-        }
-            "
+            class="flex items-center justify-center text-base font-medium w-8 h-8 rounded-lg cursor-pointer ${isActive ? 'bg-[#2C2C2C] text-white' : 'hover:bg-[#E5E5E5] text-[#1E1E1E]'}"
             data-page="${page}"
           >
             ${page}
