@@ -137,7 +137,11 @@ export async function HomePage(app) {
         }
 
         if (!query) {
-            loadPage(state.currentPage)
+            await loadPage(state.currentPage)
+            return
+        }
+
+        if (query.length < 3) {
             return
         }
 
