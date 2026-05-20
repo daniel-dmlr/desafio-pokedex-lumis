@@ -1,9 +1,4 @@
-export function Pagination({
-  currentPage,
-  totalPages,
-  onPageChange,
-  container,
-}) {
+export function Pagination({ currentPage, totalPages, onPageChange, container }) {
   if (!container) return
 
   function getVisiblePages(currentPage, totalPages) {
@@ -47,43 +42,42 @@ export function Pagination({
     const visiblePages = getVisiblePages(currentPage, totalPages)
 
     const pages = visiblePages.map((page) => {
-      if (page === '...') {
+        if (page === '...') {
+          return `
+            <li>
+              <span class="flex items-center justify-center text-base font-medium w-8 h-8">
+                ...
+              </span>
+            </li>
+          `
+        }
+
+        const isActive = page === currentPage
+
         return `
           <li>
-            <span
-              class="flex items-center justify-center text-base font-medium w-8 h-8"
+            <button
+              class="flex items-center justify-center text-base font-medium w-8 h-8 rounded-lg cursor-pointer ${isActive ? 'bg-[#2C2C2C] text-white' : 'hover:bg-[#E5E5E5] text-[#1E1E1E]'}"
+              data-page="${page}"
             >
-              ...
-            </span>
+              ${page}
+            </button>
           </li>
         `
-      }
-
-      const isActive = page === currentPage
-
-      return `
-        <li>
-          <button
-            class="flex items-center justify-center text-base font-medium w-8 h-8 rounded-lg cursor-pointer ${isActive ? 'bg-[#2C2C2C] text-white' : 'hover:bg-[#E5E5E5] text-[#1E1E1E]'}"
-            data-page="${page}"
-          >
-            ${page}
-          </button>
-        </li>
-      `
-    }).join('')
+      }).join('')
 
     container.innerHTML = `
       <nav aria-label="Paginação" class="mb-14">
-       <ul class="flex gap-2 list-none text-base">
-
+        <ul class="flex gap-2 list-none text-base">
           <li>
             <button
               class="flex items-center justify-center gap-2 px-3 py-2 h-8 rounded-lg hover:enabled:bg-[#E5E5E5] enabled:cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
               data-action="prev"
               ${currentPage === 1 ? 'disabled' : ''}
             >
-              <img src="/assets/arrow-left.svg" alt="Anterior" class="w-4 h-4" /> Anterior
+              <img src="/assets/arrow-left.svg" alt="Anterior" class="w-4 h-4" />
+
+              Anterior
             </button>
           </li>
 
@@ -91,20 +85,21 @@ export function Pagination({
 
           <li>
             <button
-              class="flex items-center justify-center gap-2 px-3 py-2 h-8 rounded-lg  hover:enabled:bg-[#E5E5E5] enabled:cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+              class="flex items-center justify-center gap-2 px-3 py-2 h-8 rounded-lg hover:enabled:bg-[#E5E5E5] enabled:cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
               data-action="next"
               ${currentPage === totalPages ? 'disabled' : ''}
             >
-              Próximo <img src="/assets/arrow-right.svg" alt="Próxima" class="w-4 h-4" />
+              Próximo
+
+              <img src="/assets/arrow-right.svg" alt="Próxima" class="w-4 h-4" />
             </button>
           </li>
-
         </ul>
       </nav>
     `
   }
 
-  container.addEventListener('click', (event) => {
+  container.onclick = (event) => {
     const button = event.target.closest('button')
 
     if (!button) return
@@ -129,7 +124,7 @@ export function Pagination({
     if (typeof onPageChange === 'function') {
       onPageChange(currentPage)
     }
-  })
+  }
 
   generatePagination()
 }

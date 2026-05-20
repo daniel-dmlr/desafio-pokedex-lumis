@@ -134,10 +134,6 @@ export async function HomePage(app) {
             return
         }
 
-        if (query.length < 3) {
-            return
-        }
-
         state = {
             ...state,
             isLoading: true,

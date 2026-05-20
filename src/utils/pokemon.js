@@ -43,28 +43,28 @@ export function translateType(type) {
 }
 
 export const typeColors = {
-    fire: { text: '#FF9741' },
-    water: { text: '#3692DC' },
-    grass: { text: '#38BF4B' },
-    electric: { text: '#FBD100' },
-    psychic: { text: '#FF6675' },
-    ice: { text: '#4CD1C0' },
-    dragon: { text: '#4F60E2' },
-    dark: { text: '#5B5466' },
+    fire: { text: '#EE8130' },
+    water: { text: '#6390F0' },
+    grass: { text: '#7AC74C' },
+    electric: { text: '#F7D02C' },
+    psychic: { text: '#F95587' },
+    ice: { text: '#96D9D6' },
+    dragon: { text: '#6F35FC' },
+    dark: { text: '#705746' },
     fairy: { text: '#FB89EB' },
-    fighting: { text: '#E0306A' },
-    poison: { text: '#B567CE' },
-    ground: { text: '#E87236' },
-    rock: { text: '#C8B686' },
-    ghost: { text: '#556AAE' },
-    bug: { text: '#83C300' },
-    steel: { text: '#5A8EA2' },
-    flying: { text: '#89AAE3' },
-    normal: { text: '#919AA2' },
+    fighting: { text: '#C22E28' },
+    poison: { text: '#A33EA1' },
+    ground: { text: '#E2BF65' },
+    rock: { text: '#B6A136' },
+    ghost: { text: '#735797' },
+    bug: { text: '#A6B91A' },
+    steel: { text: '#B7B7CE' },
+    flying: { text: '#A98FF3' },
+    normal: { text: '#A8A77A' },
     stellar: { text: '#40B5A5' },
-    unknown: { text: '#6e6e6e' },
+    unknown: { text: '#000000' },
 }
 
 export function getTypeColor(type) {
-    return typeColors[type] ?? { text: '#919AA2' }
+    return typeColors[type] ?? { text: '#A8A77A' }
 }
