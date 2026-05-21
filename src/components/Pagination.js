@@ -68,7 +68,7 @@ export function Pagination({ currentPage, totalPages, onPageChange, container })
 
     container.innerHTML = `
       <nav aria-label="Paginação" class="mb-14">
-        <ul class="flex gap-2 list-none text-base">
+        <ul class="flex flex-wrap justify-center gap-0 sm:gap-2 list-none text-base">
           <li>
             <button
               class="flex items-center justify-center gap-2 px-3 py-2 h-8 rounded-lg hover:enabled:bg-[#E5E5E5] enabled:cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
@@ -76,8 +76,7 @@ export function Pagination({ currentPage, totalPages, onPageChange, container })
               ${currentPage === 1 ? 'disabled' : ''}
             >
               <img src="/assets/arrow-left.svg" alt="Anterior" class="w-4 h-4" />
-
-              Anterior
+              <span class="hidden sm:block">Anterior</span>
             </button>
           </li>
 
@@ -89,8 +88,7 @@ export function Pagination({ currentPage, totalPages, onPageChange, container })
               data-action="next"
               ${currentPage === totalPages ? 'disabled' : ''}
             >
-              Próximo
-
+              <span class="hidden sm:block">Próximo</span>
               <img src="/assets/arrow-right.svg" alt="Próxima" class="w-4 h-4" />
             </button>
           </li>

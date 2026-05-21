@@ -10,10 +10,8 @@ export function PokemonCard(pokemon) {
       const { text } = getTypeColor(type.name)
 
       return `
-        ${index > 0 ? `<span class="w-[3px] h-[3px] rounded-full bg-[#757575] self-center shrink-0"></span>` : ''}
-
         <span
-          class="type-badge"
+          class="type-badge leading-none"
           style="color:${text}; font-weight: 700;"
         >
           ${translateType(type.name)}
@@ -31,7 +29,7 @@ export function PokemonCard(pokemon) {
         id="pokemon-header"
         class="w-full flex justify-between p-3"
       >
-        <div class="flex items-center gap-1">
+        <div class="flex items-center gap-2">
           ${typesBadges}
         </div>
 
@@ -50,18 +48,23 @@ export function PokemonCard(pokemon) {
         <img
           src="${spriteUrl}"
           alt="${capitalize(name)}"
-          class="w-36 h-36 object-contain opacity-0 transition-opacity duration-300"
+          class="w-36 h-36 pb-6 object-contain opacity-0 transition-opacity duration-300"
           loading="lazy"
           onload="
+            this.classList.remove('opacity-0');
+            this.previousElementSibling.remove();
+          "
+          onerror="
+            this.src='/assets/pokeball-icon.png';
             this.classList.remove('opacity-0');
             this.previousElementSibling.remove();
           "
         />
       </div>
 
-      <h3 class="text-[#263156] font-bold pt-3 pb-14">
+      <h2 class="text-[#263156] font-bold pb-14">
         ${capitalize(name)}
-      </h3>
+      </h2>
     </article>
   `
 }

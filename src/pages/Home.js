@@ -19,23 +19,25 @@ let state = {
     error: null,
 }
 
+let searchGeneration = 0
+
 export async function HomePage(app) {
     app.innerHTML = `
-    <header id="header" class="flex w-full items-center justify-between p-8 border-b border-[#D9D9D9] mb-8">
+    <header id="header" class="flex flex-col sm:flex-row w-full items-center justify-between p-8 gap-4 sm:gap-0 border-b border-[#D9D9D9] mb-8">
       <img src="/assets/pokedex-text.png" alt="Pokédex" class="w-[124px]" />
 
-      <div id="home-buttons" class="flex flex-end gap-4">
+      <div id="home-buttons" class="flex gap-4 w-full sm:w-auto justify-center sm:justify-end">
         <h2 class="hover:bg-[#E5E5E5] rounded-lg p-2 cursor-pointer">Home</h2>
         <h2 class="hover:bg-[#E5E5E5] rounded-lg p-2 cursor-pointer">Pokédex</h2>
       </div>
     </header>
 
-    <div id="controls" class="flex justify-center items-center gap-6 mb-8">
+    <div id="controls" class="flex flex-col sm:flex-row justify-center items-center gap-6 mb-8 px-4 sm:px-8">
       <div id="search"></div>
       <div id="type-filter"></div>
     </div>
 
-    <div id="pokemon-grid" class="grid grid-cols-6 gap-4 mx-8"></div>
+    <div id="pokemon-grid" class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-4 mx-4 sm:mx-8"></div>
 
     <footer id="footer" class="flex w-full justify-center mt-26">
       <div id="pagination"></div>
@@ -55,7 +57,7 @@ export async function HomePage(app) {
         }
 
         if (pokemon.length === 0) {
-            gridEl.innerHTML = '<p>Nenhum Pokémon encontrado.</p>'
+            gridEl.innerHTML = '<p class="col-span-full whitespace-nowrap">Nenhum Pokémon encontrado.</p>'
             return
         }
 
@@ -90,6 +92,8 @@ export async function HomePage(app) {
     }
 
     async function loadPage(page) {
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+
         state = {
             ...state,
             isLoading: true,
@@ -123,28 +127,21 @@ export async function HomePage(app) {
     }
 
     const handleSearch = debounce(async (query) => {
+        const gen = ++searchGeneration
+
         state = {
             ...state,
             searchQuery: query,
             selectedType: '',
-        }
-
-        if (!query) {
-            await loadPage(state.currentPage)
-            return
-        }
-
-        state = {
-            ...state,
             isLoading: true,
         }
 
         renderGrid()
 
         try {
-            const pokemon = await fetchPokemon(
-                query.toLowerCase()
-            )
+            const pokemon = await fetchPokemon(query.toLowerCase())
+
+            if (gen !== searchGeneration) return
 
             state = {
                 ...state,
@@ -152,6 +149,8 @@ export async function HomePage(app) {
                 isLoading: false,
             }
         } catch {
+            if (gen !== searchGeneration) return
+
             state = {
                 ...state,
                 pokemon: [],
@@ -205,10 +204,29 @@ export async function HomePage(app) {
     function bindControlEvents() {
         const searchInput = controlsEl.querySelector('#search-input')
 
+        const updatePlaceholder = () => {
+            if (!searchInput) return
+            searchInput.placeholder = window.innerWidth < 640
+                ? 'Faça uma busca por nome ou n°'
+                : 'Faça uma busca por nome ou número do pokémon'
+        }
+        updatePlaceholder()
+        window.addEventListener('resize', updatePlaceholder)
+
         // const typeSelect =
         //     controlsEl.querySelector('#type-filter')
 
-        searchInput?.addEventListener('input', (e) => handleSearch(e.target.value.trim()))
+        searchInput?.addEventListener('input', (e) => {
+            const value = e.target.value.trim()
+            if (!value) {
+                handleSearch.cancel()
+                searchGeneration++
+                state = { ...state, searchQuery: '', selectedType: '' }
+                loadPage(state.currentPage)
+                return
+            }
+            handleSearch(value)
+        })
 
         // typeSelect?.addEventListener('change', (e) =>
         //     handleTypeFilter(e.target.value)
