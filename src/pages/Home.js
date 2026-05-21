@@ -1,8 +1,8 @@
 import '../styles/style.css'
 import { fetchPokemonList, fetchPokemonDetails, fetchPokemon } from '../api/services/pokemon.js'
-// import {fetchTypes,fetchPokemonByType} from '../api/services/type.js'
+import { fetchTypes, fetchPokemonByType } from '../api/services/type.js'
 import { SearchBar } from '../components/SearchBar.js'
-// import { TypeFilter } from '../components/TypeFilter.js'
+import { TypeFilter } from '../components/TypeFilter.js'
 import { PokemonCard } from '../components/PokemonCard.js'
 import { Pagination } from '../components/Pagination.js'
 import { Loading } from '../components/Loading.js'
@@ -11,6 +11,7 @@ import { debounce } from '../utils/debounce.js'
 
 let state = {
     pokemon: [],
+    typeFilteredList: [],
     currentPage: 1,
     totalPages: 0,
     searchQuery: '',
@@ -57,7 +58,7 @@ export async function HomePage(app) {
         }
 
         if (pokemon.length === 0) {
-            gridEl.innerHTML = '<p class="col-span-full whitespace-nowrap">Nenhum Pokémon encontrado.</p>'
+            gridEl.innerHTML = '<p class="col-span-full whitespace-nowrap text-center">Nenhum Pokémon encontrado.</p>'
             return
         }
 
@@ -67,7 +68,7 @@ export async function HomePage(app) {
     function renderPagination() {
         const { currentPage, totalPages, searchQuery, selectedType } = state
 
-        if (searchQuery || selectedType) {
+        if (searchQuery) {
             paginationEl.innerHTML = ''
             return
         }
@@ -78,15 +79,20 @@ export async function HomePage(app) {
             container: paginationEl,
 
             onPageChange: async (page) => {
-                await loadPage(page)
+                if (selectedType) {
+                    await loadTypePage(page)
+                } else {
+                    await loadPage(page)
+                }
             },
         })
     }
 
     async function renderControls() {
-        // const types = await fetchTypes().catch(() => [])
+        const allTypes = await fetchTypes().catch(() => [])
+        const types = allTypes.filter(({ name }) => name !== 'stellar' && name !== 'unknown')
 
-        controlsEl.innerHTML = SearchBar() // + TypeFilter(types, state.selectedType)
+        controlsEl.innerHTML = SearchBar() + TypeFilter(types, state.selectedType)
 
         bindControlEvents()
     }
@@ -126,13 +132,33 @@ export async function HomePage(app) {
         renderPagination()
     }
 
+    async function loadTypePage(page) {
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+
+        state = { ...state, isLoading: true, currentPage: page }
+        renderGrid()
+
+        const PAGE_SIZE = 18
+        const start = (page - 1) * PAGE_SIZE
+        const slice = state.typeFilteredList.slice(start, start + PAGE_SIZE)
+
+        try {
+            const details = await fetchPokemonDetails(slice)
+            state = { ...state, pokemon: details, isLoading: false }
+        } catch (err) {
+            state = { ...state, isLoading: false, error: err.message }
+        }
+
+        renderGrid()
+        renderPagination()
+    }
+
     const handleSearch = debounce(async (query) => {
         const gen = ++searchGeneration
 
         state = {
             ...state,
             searchQuery: query,
-            selectedType: '',
             isLoading: true,
         }
 
@@ -143,9 +169,12 @@ export async function HomePage(app) {
 
             if (gen !== searchGeneration) return
 
+            const matchesType = !state.selectedType ||
+                pokemon.types.some(({ type }) => type.name === state.selectedType)
+
             state = {
                 ...state,
-                pokemon: [pokemon],
+                pokemon: matchesType ? [pokemon] : [],
                 isLoading: false,
             }
         } catch {
@@ -173,6 +202,7 @@ export async function HomePage(app) {
         renderGrid()
 
         if (!type) {
+            state = { ...state, typeFilteredList: [] }
             loadPage(1)
             return
         }
@@ -180,13 +210,14 @@ export async function HomePage(app) {
         try {
             const list = await fetchPokemonByType(type)
 
-            const details = await fetchPokemonDetails(
-                list.slice(0, 18)
-            )
+            const details = await fetchPokemonDetails(list.slice(0, 18))
 
             state = {
                 ...state,
                 pokemon: details,
+                typeFilteredList: list,
+                totalPages: getTotalPages(list.length),
+                currentPage: 1,
                 isLoading: false,
             }
         } catch (err) {
@@ -213,24 +244,54 @@ export async function HomePage(app) {
         updatePlaceholder()
         window.addEventListener('resize', updatePlaceholder)
 
-        // const typeSelect =
-        //     controlsEl.querySelector('#type-filter')
+        const typeWrapper = controlsEl.querySelector('#type-filter-wrapper')
+        const typeTrigger = controlsEl.querySelector('#type-filter-trigger')
+        const typeLabel = controlsEl.querySelector('#type-filter-label')
+        const typeChevron = controlsEl.querySelector('#type-filter-chevron')
+        const typeDropdown = controlsEl.querySelector('#type-filter-dropdown')
+
+        const closeDropdown = () => {
+            typeDropdown?.classList.add('hidden')
+            typeChevron?.classList.remove('rotate-180')
+        }
 
         searchInput?.addEventListener('input', (e) => {
             const value = e.target.value.trim()
             if (!value) {
                 handleSearch.cancel()
                 searchGeneration++
-                state = { ...state, searchQuery: '', selectedType: '' }
-                loadPage(state.currentPage)
+                state = { ...state, searchQuery: '' }
+                if (state.selectedType) {
+                    handleTypeFilter(state.selectedType)
+                } else {
+                    loadPage(state.currentPage)
+                }
                 return
             }
             handleSearch(value)
         })
 
-        // typeSelect?.addEventListener('change', (e) =>
-        //     handleTypeFilter(e.target.value)
-        // )
+        typeTrigger?.addEventListener('click', () => {
+            const isOpen = !typeDropdown.classList.contains('hidden')
+            typeDropdown.classList.toggle('hidden', isOpen)
+            typeChevron.classList.toggle('rotate-180', !isOpen)
+        })
+
+        typeDropdown?.addEventListener('click', (e) => {
+            const item = e.target.closest('li')
+            if (!item) return
+
+            const { value, color } = item.dataset
+            typeLabel.textContent = item.textContent.trim()
+            typeLabel.style.color = color || '#1C1C1E'
+            if (searchInput) searchInput.value = ''
+            closeDropdown()
+            handleTypeFilter(value)
+        })
+
+        document.addEventListener('click', (e) => {
+            if (!typeWrapper?.contains(e.target)) closeDropdown()
+        })
     }
 
     await renderControls()

@@ -71,12 +71,12 @@ export function Pagination({ currentPage, totalPages, onPageChange, container })
         <ul class="flex flex-wrap justify-center gap-0 sm:gap-2 list-none text-base">
           <li>
             <button
-              class="flex items-center justify-center gap-2 px-3 py-2 h-8 rounded-lg hover:enabled:bg-[#E5E5E5] enabled:cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+              class="flex items-center justify-center gap-2 px-3 py-2 h-8 rounded-lg hover:enabled:bg-[#E5E5E5] enabled:cursor-pointer disabled:opacity-50"
               data-action="prev"
               ${currentPage === 1 ? 'disabled' : ''}
             >
               <img src="/assets/arrow-left.svg" alt="Anterior" class="w-4 h-4" />
-              <span class="hidden sm:block">Anterior</span>
+              <span class="hidden sm:block leading-none">Anterior</span>
             </button>
           </li>
 
@@ -84,11 +84,11 @@ export function Pagination({ currentPage, totalPages, onPageChange, container })
 
           <li>
             <button
-              class="flex items-center justify-center gap-2 px-3 py-2 h-8 rounded-lg hover:enabled:bg-[#E5E5E5] enabled:cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+              class="flex items-center justify-center gap-2 px-3 py-2 h-8 rounded-lg hover:enabled:bg-[#E5E5E5] enabled:cursor-pointer disabled:opacity-50"
               data-action="next"
               ${currentPage === totalPages ? 'disabled' : ''}
             >
-              <span class="hidden sm:block">Próximo</span>
+              <span class="hidden sm:block leading-none">Próximo</span>
               <img src="/assets/arrow-right.svg" alt="Próxima" class="w-4 h-4" />
             </button>
           </li>

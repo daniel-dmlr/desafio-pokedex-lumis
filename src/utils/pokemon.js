@@ -34,8 +34,6 @@ export const typeTranslations = {
     steel: 'Aço',
     flying: 'Voador',
     normal: 'Normal',
-    stellar: 'Estelar',
-    unknown: 'Desconhecido',
 }
 
 export function translateType(type) {
@@ -61,8 +59,6 @@ export const typeColors = {
     steel: { text: '#B7B7CE' },
     flying: { text: '#A98FF3' },
     normal: { text: '#A8A77A' },
-    stellar: { text: '#40B5A5' },
-    unknown: { text: '#000000' },
 }
 
 export function getTypeColor(type) {
