@@ -20,7 +20,6 @@ describe('TypeFilter', () => {
   it('renderiza os tipos ordenados alfabeticamente pelo nome em português', () => {
     const html = TypeFilter(mockTypes)
     const pos = (label) => html.indexOf(label)
-    // Água < Fogo < Inseto < Planta
     expect(pos('Água')).toBeLessThan(pos('Fogo'))
     expect(pos('Fogo')).toBeLessThan(pos('Inseto'))
     expect(pos('Inseto')).toBeLessThan(pos('Planta'))
