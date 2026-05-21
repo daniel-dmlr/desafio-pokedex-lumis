@@ -1,4 +1,5 @@
-import { getSpriteUrl, formatId, capitalize, translateType, getTypeColor } from '../utils/pokemon.js'
+import { getSpriteUrl, formatId, capitalize } from '../utils/pokemon.js'
+import { translateType, getTypeColor } from '../styles/types.js'
 import { Loading } from './Loading.js'
 
 export function PokemonCard(pokemon) {

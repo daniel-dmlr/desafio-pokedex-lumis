@@ -1,10 +1,11 @@
-import { translateType, getTypeColor } from '../utils/pokemon.js'
+import { translateType, getTypeColor } from '../styles/types.js'
 
 export function TypeFilter(types, selectedType = '') {
   const selectedLabel = selectedType ? translateType(selectedType) : 'Todos'
   const selectedColor = selectedType ? getTypeColor(selectedType).text : ''
 
-  const options = types
+  const options = [...types]
+    .sort((a, b) => translateType(a.name).localeCompare(translateType(b.name), 'pt-BR'))
     .map(({ name }) => {
       const { text } = getTypeColor(name)
       return `
